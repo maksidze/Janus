@@ -1,0 +1,1 @@
+sudo python -m uvicorn main:app

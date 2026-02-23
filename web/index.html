@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Janus — SD Card Mass Flasher</title>
+    <link rel="stylesheet" href="/static/spectre.css" />
+    <link rel="stylesheet" href="/static/spectre-exp.css" />
+    <link rel="stylesheet" href="/static/spectre-icons.css" />
+    <link rel="stylesheet" href="/static/dark.css" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<header class="app-header">
+    <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <path d="M6 10h.01M6 14h.01"/>
+            <path d="M10 10h8M10 14h5"/>
+        </svg>
+    </div>
+    <div class="title-group">
+        <h1>Janus</h1>
+        <div class="subtitle">SD Card Mass Flasher</div>
+    </div>
+</header>
+
+<!-- ── Batch Control Bar ───────────────────────────────────────────── -->
+<div class="batch-bar">
+    <div class="bar-group">
+        <label for="sel-image">Image</label>
+        <select id="sel-image"><option value="">— выберите образ —</option></select>
+    </div>
+
+    <div class="bar-sep"></div>
+
+    <div class="bar-group">
+        <label for="inp-concurrency">Parallel</label>
+        <input id="inp-concurrency" type="number" min="1" max="32" value="2" />
+    </div>
+
+    <div class="bar-sep"></div>
+
+    <div class="bar-options">
+        <label><input type="checkbox" id="opt-verify" /> Verify</label>
+        <label><input type="checkbox" id="opt-expand" /> Expand</label>
+        <label><input type="checkbox" id="opt-resize" /> Resize FS</label>
+        <label><input type="checkbox" id="opt-eject" /> Eject after</label>
+        <label><input type="checkbox" id="opt-removable" checked /> Only removable</label>
+    </div>
+
+    <div class="bar-sep"></div>
+
+    <div class="bar-actions">
+        <button class="btn btn-primary" id="btn-start">▶ Start</button>
+        <button class="btn" id="btn-stop-all">⏹ Stop all</button>
+        <button class="btn" id="btn-retry-failed">↻ Retry failed</button>
+    </div>
+</div>
+
+<!-- ── Counters ────────────────────────────────────────────────────── -->
+<div class="batch-counters">
+    <div class="counter c-active">Active: <strong id="cnt-active">0</strong></div>
+    <div class="counter c-queued">Queue: <strong id="cnt-queued">0</strong></div>
+    <div class="counter c-done">Done: <strong id="cnt-done">0</strong></div>
+    <div class="counter c-failed">Failed: <strong id="cnt-failed">0</strong></div>
+</div>
+
+<!-- ── Grid Toolbar ────────────────────────────────────────────────── -->
+<div class="grid-toolbar">
+    <button class="btn" id="btn-select-all">Select all connected</button>
+    <button class="btn" id="btn-deselect-all">Deselect all</button>
+    <button class="btn" id="btn-refresh-drives">↻ Refresh drives</button>
+    <span style="flex:1"></span>
+    <button class="btn" id="btn-edit-layout">⚙ Edit layout</button>
+</div>
+
+<!-- ── Port Grid ───────────────────────────────────────────────────── -->
+<div class="port-grid-wrap">
+    <div class="port-grid" id="port-grid"></div>
+</div>
+
+<!-- ── Details Modal ───────────────────────────────────────────────── -->
+<div class="j-modal-overlay hidden" id="modal-details">
+    <div class="j-modal">
+        <h3 id="detail-title">Job Details</h3>
+        <div id="detail-info" style="margin-bottom:12px;font-size:.85rem;color:var(--j-text-sec)"></div>
+        <div class="detail-log" id="detail-log"></div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeModal('modal-details')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Edit Layout Modal ───────────────────────────────────────────── -->
+<div class="j-modal-overlay hidden" id="modal-layout">
+    <div class="j-modal" style="max-width:900px">
+        <h3>Edit Layout</h3>
+
+        <!-- Grid dimensions row -->
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;align-items:center">
+            <div class="bar-group">
+                <label for="le-rows">Rows</label>
+                <input id="le-rows" type="number" min="1" max="10" value="2" style="width:60px" />
+            </div>
+            <div class="bar-group">
+                <label for="le-cols">Cols</label>
+                <input id="le-cols" type="number" min="1" max="10" value="4" style="width:60px" />
+            </div>
+            <div class="bar-group">
+                <label for="le-size">Size</label>
+                <select id="le-size">
+                    <option value="normal">Normal</option>
+                    <option value="compact">Compact</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="le-apply-rc">Apply rows/cols</button>
+            <button class="btn btn-success" id="le-auto-assign" title="Назначить физические порты ячейкам по порядку (порт 1 → ячейка 1 и т.д.)">
+                ⚡ Auto-assign ports
+            </button>
+            <button class="btn" id="le-refresh-ports" title="Обновить список физических портов">↻ Refresh ports</button>
+        </div>
+
+        <!-- Physical ports legend panel -->
+        <div class="le-ports-panel" id="le-ports-panel">
+            <div class="le-ports-title">Обнаруженные физические USB-порты</div>
+            <div class="le-ports-list" id="le-ports-list"></div>
+        </div>
+
+        <!-- Cells table -->
+        <div class="layout-editor-grid" id="le-grid">
+            <div class="le-header">Cell</div>
+            <div class="le-header">Label</div>
+            <div class="le-header">Физический порт</div>
+            <div class="le-header">USB</div>
+            <div class="le-header">On</div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn" id="le-export">⬇ Export JSON</button>
+            <label class="btn" style="cursor:pointer">⬆ Import JSON
+                <input type="file" id="le-import" accept=".json" style="display:none" />
+            </label>
+            <span style="flex:1"></span>
+            <button class="btn" onclick="closeModal('modal-layout')">Cancel</button>
+            <button class="btn btn-primary" id="le-save">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast container ─────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
+
