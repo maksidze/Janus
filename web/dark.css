@@ -1,0 +1,228 @@
+/*
+ * Janus — Dark theme overrides for Spectre.css
+ * Loaded after spectre.css to restyle all components for dark UI.
+ */
+
+/* ── CSS Variables ───────────────────────────────────────────────────────── */
+:root {
+    --j-bg:           #0d1017;
+    --j-bg-alt:       #131720;
+    --j-surface:      #181d28;
+    --j-surface-hover:#1e2536;
+    --j-border:       #272e3f;
+    --j-border-light: #2f3850;
+    --j-accent:       #4f8ef7;
+    --j-accent-hover: #3a72d8;
+    --j-accent-dim:   rgba(79,142,247,.12);
+    --j-danger:       #e05c5c;
+    --j-danger-dim:   rgba(224,92,92,.12);
+    --j-success:      #4caf82;
+    --j-success-dim:  rgba(76,175,130,.12);
+    --j-warning:      #f0a733;
+    --j-warning-dim:  rgba(240,167,51,.12);
+    --j-info:         #5bc0de;
+    --j-text:         #dfe2ee;
+    --j-text-sec:     #8b93ad;
+    --j-text-muted:   #5c6580;
+    --j-radius:       8px;
+    --j-radius-sm:    5px;
+    --j-shadow:       0 2px 12px rgba(0,0,0,.35);
+}
+
+/* ── Global resets for Spectre ────────────────────────────────────────────── */
+body {
+    background: var(--j-bg) !important;
+    color: var(--j-text) !important;
+}
+
+a { color: var(--j-accent); }
+a:hover { color: var(--j-accent-hover); }
+
+code, pre {
+    background: var(--j-bg-alt) !important;
+    color: var(--j-text) !important;
+    border-color: var(--j-border) !important;
+}
+
+hr { border-color: var(--j-border); }
+
+/* ── Spectre: Forms ──────────────────────────────────────────────────────── */
+.form-input,
+.form-select,
+.form-input:focus,
+.form-select:focus {
+    background: var(--j-bg-alt);
+    border-color: var(--j-border);
+    color: var(--j-text);
+}
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--j-accent);
+    box-shadow: 0 0 0 2px var(--j-accent-dim);
+}
+.form-input::placeholder { color: var(--j-text-muted); }
+
+.form-label,
+.form-group > label {
+    color: var(--j-text-sec);
+}
+
+.form-checkbox input:checked + .form-icon,
+.form-switch input:checked + .form-icon {
+    background: var(--j-accent);
+    border-color: var(--j-accent);
+}
+
+.form-checkbox .form-icon,
+.form-switch .form-icon {
+    border-color: var(--j-border);
+    background: var(--j-bg-alt);
+}
+
+/* ── Spectre: Buttons ────────────────────────────────────────────────────── */
+.btn {
+    border-color: var(--j-border);
+    color: var(--j-text);
+    background: var(--j-surface);
+}
+.btn:hover {
+    background: var(--j-surface-hover);
+    border-color: var(--j-border-light);
+}
+.btn.btn-primary {
+    background: var(--j-accent);
+    border-color: var(--j-accent);
+    color: #fff;
+}
+.btn.btn-primary:hover {
+    background: var(--j-accent-hover);
+    border-color: var(--j-accent-hover);
+}
+.btn.btn-error {
+    background: var(--j-danger);
+    border-color: var(--j-danger);
+    color: #fff;
+}
+.btn.btn-success {
+    background: var(--j-success);
+    border-color: var(--j-success);
+    color: #fff;
+}
+.btn:disabled,
+.btn.disabled {
+    opacity: .4;
+}
+
+/* ── Spectre: Cards / Panels ─────────────────────────────────────────────── */
+.card,
+.panel {
+    background: var(--j-surface);
+    border-color: var(--j-border);
+}
+.card .card-header,
+.card .card-body,
+.card .card-footer {
+    border-color: var(--j-border);
+}
+.panel .panel-header,
+.panel .panel-body,
+.panel .panel-footer {
+    border-color: var(--j-border);
+}
+
+/* ── Spectre: Navbar ─────────────────────────────────────────────────────── */
+.navbar {
+    background: var(--j-surface);
+    border-bottom: 1px solid var(--j-border);
+}
+
+/* ── Spectre: Table ──────────────────────────────────────────────────────── */
+.table th,
+.table td {
+    border-color: var(--j-border);
+}
+.table.table-striped tbody tr:nth-of-type(odd) {
+    background: var(--j-bg-alt);
+}
+.table.table-hover tbody tr:hover {
+    background: var(--j-surface-hover);
+}
+
+/* ── Spectre: Modal ──────────────────────────────────────────────────────── */
+.modal .modal-overlay {
+    background: rgba(0,0,0,.65);
+}
+.modal .modal-container {
+    background: var(--j-surface);
+    border: 1px solid var(--j-border);
+    box-shadow: var(--j-shadow);
+}
+.modal .modal-header {
+    border-bottom-color: var(--j-border);
+    color: var(--j-text);
+}
+.modal .modal-footer {
+    border-top-color: var(--j-border);
+}
+
+/* ── Spectre: Toast ──────────────────────────────────────────────────────── */
+.toast {
+    background: var(--j-surface);
+    border: 1px solid var(--j-border);
+    color: var(--j-text);
+}
+.toast.toast-error { border-color: var(--j-danger); }
+.toast.toast-success { border-color: var(--j-success); }
+.toast.toast-warning { border-color: var(--j-warning); }
+
+/* ── Spectre: Badges / Labels ────────────────────────────────────────────── */
+.label {
+    background: var(--j-bg-alt);
+    color: var(--j-text-sec);
+}
+.label.label-primary { background: var(--j-accent-dim); color: var(--j-accent); }
+.label.label-error   { background: var(--j-danger-dim);  color: var(--j-danger); }
+.label.label-success { background: var(--j-success-dim); color: var(--j-success); }
+.label.label-warning { background: var(--j-warning-dim); color: var(--j-warning); }
+
+/* ── Spectre: Menus / Dropdowns ──────────────────────────────────────────── */
+.menu {
+    background: var(--j-surface);
+    border-color: var(--j-border);
+    box-shadow: var(--j-shadow);
+}
+.menu .menu-item > a {
+    color: var(--j-text);
+}
+.menu .menu-item > a:hover {
+    background: var(--j-surface-hover);
+    color: var(--j-accent);
+}
+.menu .menu-item.active > a {
+    background: var(--j-accent-dim);
+    color: var(--j-accent);
+}
+
+/* ── Spectre: Tooltips ───────────────────────────────────────────────────── */
+.tooltip::after {
+    background: var(--j-surface);
+    color: var(--j-text);
+    border: 1px solid var(--j-border);
+}
+
+/* ── Spectre: Tabs ───────────────────────────────────────────────────────── */
+.tab .tab-item a {
+    color: var(--j-text-sec);
+}
+.tab .tab-item a:hover,
+.tab .tab-item.active a {
+    color: var(--j-accent);
+    border-bottom-color: var(--j-accent);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--j-bg); }
+::-webkit-scrollbar-thumb { background: var(--j-border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--j-text-muted); }
+
